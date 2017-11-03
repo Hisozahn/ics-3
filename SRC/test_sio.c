@@ -28,11 +28,15 @@ e-mail: kluchev@d1.ifmo.ru
 ****************************************************************************/
 #include "aduc812.h"
 #include "sio.h"
+#include "dip.h"
+#include "led.h"
 
 void main( void )
 {
 unsigned char c;
-
+    /*while (1) {
+        leds(getDips());
+    }*/
     init_sio( S9600 );
 
     type("Тест драйвера SIO для стенда SDK-1.1\r\n");
