@@ -63,9 +63,10 @@ term:
 LAB_SRC = \
 $(SRC_DIR)/led.c \
 $(SRC_DIR)/max.c \
-$(SRC_DIR)/sio.c \
+$(SRC_DIR)/int_sio.c \
 $(SRC_DIR)/test_sio.c \
-$(SRC_DIR)/dip.c 
+$(SRC_DIR)/dip.c \
+$(SRC_DIR)/fifo.c 
 
 
 LAB_OBJ = $(LAB_SRC:.c=.rel)

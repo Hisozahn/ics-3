@@ -16,8 +16,9 @@
 -l libfloat
 SRC/led.rel
 SRC/max.rel
-SRC/sio.rel
+SRC/int_sio.rel
 SRC/test_sio.rel
 SRC/dip.rel
+SRC/fifo.rel
 
 -e

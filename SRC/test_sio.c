@@ -27,26 +27,35 @@ e-mail: kluchev@d1.ifmo.ru
 
 ****************************************************************************/
 #include "aduc812.h"
-#include "sio.h"
+//#include "sio.h"
+#include "int_sio.h"
 #include "dip.h"
 #include "led.h"
+#include "fifo.h"
 
 void main( void )
 {
+    
 unsigned char c;
     /*while (1) {
-        leds(getDips());
+        leds(c);
     }*/
     init_sio( S9600 );
 
-    type("Тест драйвера SIO для стенда SDK-1.1\r\n");
-    type("Нажимайте кноки для тестирования... \r\n");
-
+    //type("Тест драйвера SIO для стенда SDK-1.1\r\n");
+    //type("Нажимайте кноки для тестирования... \r\n");
+    //type("ABCDEF\r\n");
+    
     while( 1 )
     {
-        if( rsiostat() )
-        {
-            c = rsio();
+        c = rsio();
+        if (c != 0) {
+            leds(c);
+        }
+        //if( rsiostat() )
+        //{
+            
+            /*c = rsio();
 
             switch( c )
             {
@@ -55,7 +64,7 @@ unsigned char c;
             case '3': type("\r\ntest 3\r\n"); break;
 
             default: wsio( c );          break;   
-            }
-        }
+            }*/
+        //}
     }
 }    

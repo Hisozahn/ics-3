@@ -1,0 +1,398 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.2.0 #8008 (Jul  6 2012) (MINGW32)
+                              4 ; This file was generated Fri Nov 03 15:46:13 2017
+                              5 ;--------------------------------------------------------
+                              6 	.module fifo
+                              7 	.optsdcc -mmcs51 --model-small
+                              8 	
+                              9 ;--------------------------------------------------------
+                             10 ; Public variables in this module
+                             11 ;--------------------------------------------------------
+                             12 	.globl _initFifo
+                             13 	.globl _pullElement
+                             14 	.globl _pushElement
+                             15 	.globl _isEmpty
+                             16 ;--------------------------------------------------------
+                             17 ; special function registers
+                             18 ;--------------------------------------------------------
+                             19 	.area RSEG    (ABS,DATA)
+   0000                      20 	.org 0x0000
+                             21 ;--------------------------------------------------------
+                             22 ; special function bits
+                             23 ;--------------------------------------------------------
+                             24 	.area RSEG    (ABS,DATA)
+   0000                      25 	.org 0x0000
+                             26 ;--------------------------------------------------------
+                             27 ; overlayable register banks
+                             28 ;--------------------------------------------------------
+                             29 	.area REG_BANK_0	(REL,OVR,DATA)
+   0000                      30 	.ds 8
+                             31 ;--------------------------------------------------------
+                             32 ; internal ram data
+                             33 ;--------------------------------------------------------
+                             34 	.area DSEG    (DATA)
+                             35 ;--------------------------------------------------------
+                             36 ; overlayable items in internal ram 
+                             37 ;--------------------------------------------------------
+                             38 ;--------------------------------------------------------
+                             39 ; indirectly addressable internal ram data
+                             40 ;--------------------------------------------------------
+                             41 	.area ISEG    (DATA)
+                             42 ;--------------------------------------------------------
+                             43 ; absolute internal ram data
+                             44 ;--------------------------------------------------------
+                             45 	.area IABS    (ABS,DATA)
+                             46 	.area IABS    (ABS,DATA)
+                             47 ;--------------------------------------------------------
+                             48 ; bit data
+                             49 ;--------------------------------------------------------
+                             50 	.area BSEG    (BIT)
+                             51 ;--------------------------------------------------------
+                             52 ; paged external ram data
+                             53 ;--------------------------------------------------------
+                             54 	.area PSEG    (PAG,XDATA)
+                             55 ;--------------------------------------------------------
+                             56 ; external ram data
+                             57 ;--------------------------------------------------------
+                             58 	.area XSEG    (XDATA)
+                             59 ;--------------------------------------------------------
+                             60 ; absolute external ram data
+                             61 ;--------------------------------------------------------
+                             62 	.area XABS    (ABS,XDATA)
+                             63 ;--------------------------------------------------------
+                             64 ; external initialized ram data
+                             65 ;--------------------------------------------------------
+                             66 	.area XISEG   (XDATA)
+                             67 	.area HOME    (CODE)
+                             68 	.area GSINIT0 (CODE)
+                             69 	.area GSINIT1 (CODE)
+                             70 	.area GSINIT2 (CODE)
+                             71 	.area GSINIT3 (CODE)
+                             72 	.area GSINIT4 (CODE)
+                             73 	.area GSINIT5 (CODE)
+                             74 	.area GSINIT  (CODE)
+                             75 	.area GSFINAL (CODE)
+                             76 	.area CSEG    (CODE)
+                             77 ;--------------------------------------------------------
+                             78 ; global & static initialisations
+                             79 ;--------------------------------------------------------
+                             80 	.area HOME    (CODE)
+                             81 	.area GSINIT  (CODE)
+                             82 	.area GSFINAL (CODE)
+                             83 	.area GSINIT  (CODE)
+                             84 ;--------------------------------------------------------
+                             85 ; Home
+                             86 ;--------------------------------------------------------
+                             87 	.area HOME    (CODE)
+                             88 	.area HOME    (CODE)
+                             89 ;--------------------------------------------------------
+                             90 ; code
+                             91 ;--------------------------------------------------------
+                             92 	.area CSEG    (CODE)
+                             93 ;------------------------------------------------------------
+                             94 ;Allocation info for local variables in function 'initFifo'
+                             95 ;------------------------------------------------------------
+                             96 ;pFifo                     Allocated to registers r5 r6 r7 
+                             97 ;------------------------------------------------------------
+                             98 ;	SRC/fifo.c:3: void initFifo( fifo_t* pFifo ) {
+                             99 ;	-----------------------------------------
+                            100 ;	 function initFifo
+                            101 ;	-----------------------------------------
+   0000                     102 _initFifo:
+                    0007    103 	ar7 = 0x07
+                    0006    104 	ar6 = 0x06
+                    0005    105 	ar5 = 0x05
+                    0004    106 	ar4 = 0x04
+                    0003    107 	ar3 = 0x03
+                    0002    108 	ar2 = 0x02
+                    0001    109 	ar1 = 0x01
+                    0000    110 	ar0 = 0x00
+                            111 ;	SRC/fifo.c:4: pFifo->size = 0;
+   0000 AD 82               112 	mov	r5,dpl
+   0002 AE 83               113 	mov	r6,dph
+   0004 AF F0               114 	mov	r7,b
+   0006 E4                  115 	clr	a
+   0007 12s00r00            116 	lcall	__gptrput
+                            117 ;	SRC/fifo.c:5: pFifo->head = 0;
+   000A 0D                  118 	inc	r5
+   000B BD 00 01            119 	cjne	r5,#0x00,00103$
+   000E 0E                  120 	inc	r6
+   000F                     121 00103$:
+   000F 8D 82               122 	mov	dpl,r5
+   0011 8E 83               123 	mov	dph,r6
+   0013 8F F0               124 	mov	b,r7
+   0015 E4                  125 	clr	a
+   0016 02s00r00            126 	ljmp	__gptrput
+                            127 ;------------------------------------------------------------
+                            128 ;Allocation info for local variables in function 'pullElement'
+                            129 ;------------------------------------------------------------
+                            130 ;pFifo                     Allocated to registers r5 r6 r7 
+                            131 ;element                   Allocated to registers r4 
+                            132 ;sloc0                     Allocated to stack - _bp +1
+                            133 ;sloc1                     Allocated to stack - _bp +4
+                            134 ;------------------------------------------------------------
+                            135 ;	SRC/fifo.c:8: unsigned char pullElement( fifo_t* pFifo ) {
+                            136 ;	-----------------------------------------
+                            137 ;	 function pullElement
+                            138 ;	-----------------------------------------
+   0019                     139 _pullElement:
+   0019 C0*00               140 	push	_bp
+   001B E5 81               141 	mov	a,sp
+   001D F5*00               142 	mov	_bp,a
+   001F 24 04               143 	add	a,#0x04
+   0021 F5 81               144 	mov	sp,a
+   0023 AD 82               145 	mov	r5,dpl
+   0025 AE 83               146 	mov	r6,dph
+   0027 AF F0               147 	mov	r7,b
+                            148 ;	SRC/fifo.c:9: unsigned char element = pFifo->elems[pFifo->head];
+   0029 74 02               149 	mov	a,#0x02
+   002B 2D                  150 	add	a,r5
+   002C FA                  151 	mov	r2,a
+   002D E4                  152 	clr	a
+   002E 3E                  153 	addc	a,r6
+   002F FB                  154 	mov	r3,a
+   0030 8F 04               155 	mov	ar4,r7
+   0032 A8*00               156 	mov	r0,_bp
+   0034 08                  157 	inc	r0
+   0035 74 01               158 	mov	a,#0x01
+   0037 2D                  159 	add	a,r5
+   0038 F6                  160 	mov	@r0,a
+   0039 E4                  161 	clr	a
+   003A 3E                  162 	addc	a,r6
+   003B 08                  163 	inc	r0
+   003C F6                  164 	mov	@r0,a
+   003D 08                  165 	inc	r0
+   003E A6 07               166 	mov	@r0,ar7
+   0040 A8*00               167 	mov	r0,_bp
+   0042 08                  168 	inc	r0
+   0043 86 82               169 	mov	dpl,@r0
+   0045 08                  170 	inc	r0
+   0046 86 83               171 	mov	dph,@r0
+   0048 08                  172 	inc	r0
+   0049 86 F0               173 	mov	b,@r0
+   004B E5*00               174 	mov	a,_bp
+   004D 24 04               175 	add	a,#0x04
+   004F F9                  176 	mov	r1,a
+   0050 12s00r00            177 	lcall	__gptrget
+   0053 F7                  178 	mov	@r1,a
+   0054 E5*00               179 	mov	a,_bp
+   0056 24 04               180 	add	a,#0x04
+   0058 F8                  181 	mov	r0,a
+   0059 E6                  182 	mov	a,@r0
+   005A 2A                  183 	add	a,r2
+   005B FA                  184 	mov	r2,a
+   005C E4                  185 	clr	a
+   005D 3B                  186 	addc	a,r3
+   005E FB                  187 	mov	r3,a
+   005F 8A 82               188 	mov	dpl,r2
+   0061 8B 83               189 	mov	dph,r3
+   0063 8C F0               190 	mov	b,r4
+   0065 12s00r00            191 	lcall	__gptrget
+   0068 FC                  192 	mov	r4,a
+                            193 ;	SRC/fifo.c:10: if (pFifo->size == 0) {
+   0069 8D 82               194 	mov	dpl,r5
+   006B 8E 83               195 	mov	dph,r6
+   006D 8F F0               196 	mov	b,r7
+   006F 12s00r00            197 	lcall	__gptrget
+                            198 ;	SRC/fifo.c:11: return 0;
+   0072 70 04               199 	jnz	00102$
+   0074 F5 82               200 	mov	dpl,a
+   0076 80 54               201 	sjmp	00103$
+   0078                     202 00102$:
+                            203 ;	SRC/fifo.c:13: pFifo->head = (pFifo->head + 1) % (FIFO_MAX_SIZE - 1);
+   0078 E5*00               204 	mov	a,_bp
+   007A 24 04               205 	add	a,#0x04
+   007C F8                  206 	mov	r0,a
+   007D 86 02               207 	mov	ar2,@r0
+   007F 7B 00               208 	mov	r3,#0x00
+   0081 8A 82               209 	mov	dpl,r2
+   0083 8B 83               210 	mov	dph,r3
+   0085 A3                  211 	inc	dptr
+   0086 C0 07               212 	push	ar7
+   0088 C0 06               213 	push	ar6
+   008A C0 05               214 	push	ar5
+   008C C0 04               215 	push	ar4
+   008E 74 7D               216 	mov	a,#0x7D
+   0090 C0 E0               217 	push	acc
+   0092 E4                  218 	clr	a
+   0093 C0 E0               219 	push	acc
+   0095 12s00r00            220 	lcall	__modsint
+   0098 AA 82               221 	mov	r2,dpl
+   009A 15 81               222 	dec	sp
+   009C 15 81               223 	dec	sp
+   009E D0 04               224 	pop	ar4
+   00A0 D0 05               225 	pop	ar5
+   00A2 D0 06               226 	pop	ar6
+   00A4 D0 07               227 	pop	ar7
+   00A6 A8*00               228 	mov	r0,_bp
+   00A8 08                  229 	inc	r0
+   00A9 86 82               230 	mov	dpl,@r0
+   00AB 08                  231 	inc	r0
+   00AC 86 83               232 	mov	dph,@r0
+   00AE 08                  233 	inc	r0
+   00AF 86 F0               234 	mov	b,@r0
+   00B1 EA                  235 	mov	a,r2
+   00B2 12s00r00            236 	lcall	__gptrput
+                            237 ;	SRC/fifo.c:14: pFifo->size--;
+   00B5 8D 82               238 	mov	dpl,r5
+   00B7 8E 83               239 	mov	dph,r6
+   00B9 8F F0               240 	mov	b,r7
+   00BB 12s00r00            241 	lcall	__gptrget
+   00BE FB                  242 	mov	r3,a
+   00BF 1B                  243 	dec	r3
+   00C0 8D 82               244 	mov	dpl,r5
+   00C2 8E 83               245 	mov	dph,r6
+   00C4 8F F0               246 	mov	b,r7
+   00C6 EB                  247 	mov	a,r3
+   00C7 12s00r00            248 	lcall	__gptrput
+                            249 ;	SRC/fifo.c:15: return element;
+   00CA 8C 82               250 	mov	dpl,r4
+   00CC                     251 00103$:
+   00CC 85*00 81            252 	mov	sp,_bp
+   00CF D0*00               253 	pop	_bp
+   00D1 22                  254 	ret
+                            255 ;------------------------------------------------------------
+                            256 ;Allocation info for local variables in function 'getTail'
+                            257 ;------------------------------------------------------------
+                            258 ;pFifo                     Allocated to registers r5 r6 r7 
+                            259 ;------------------------------------------------------------
+                            260 ;	SRC/fifo.c:18: static unsigned char getTail( const fifo_t* pFifo ) {
+                            261 ;	-----------------------------------------
+                            262 ;	 function getTail
+                            263 ;	-----------------------------------------
+   00D2                     264 _getTail:
+   00D2 AD 82               265 	mov	r5,dpl
+   00D4 AE 83               266 	mov	r6,dph
+   00D6 AF F0               267 	mov	r7,b
+                            268 ;	SRC/fifo.c:19: return (pFifo->head + pFifo->size) % (FIFO_MAX_SIZE - 1);
+   00D8 74 01               269 	mov	a,#0x01
+   00DA 2D                  270 	add	a,r5
+   00DB FA                  271 	mov	r2,a
+   00DC E4                  272 	clr	a
+   00DD 3E                  273 	addc	a,r6
+   00DE FB                  274 	mov	r3,a
+   00DF 8F 04               275 	mov	ar4,r7
+   00E1 8A 82               276 	mov	dpl,r2
+   00E3 8B 83               277 	mov	dph,r3
+   00E5 8C F0               278 	mov	b,r4
+   00E7 12s00r00            279 	lcall	__gptrget
+   00EA FA                  280 	mov	r2,a
+   00EB 7C 00               281 	mov	r4,#0x00
+   00ED 8D 82               282 	mov	dpl,r5
+   00EF 8E 83               283 	mov	dph,r6
+   00F1 8F F0               284 	mov	b,r7
+   00F3 12s00r00            285 	lcall	__gptrget
+   00F6 7F 00               286 	mov	r7,#0x00
+   00F8 2A                  287 	add	a,r2
+   00F9 F5 82               288 	mov	dpl,a
+   00FB EF                  289 	mov	a,r7
+   00FC 3C                  290 	addc	a,r4
+   00FD F5 83               291 	mov	dph,a
+   00FF 74 7D               292 	mov	a,#0x7D
+   0101 C0 E0               293 	push	acc
+   0103 E4                  294 	clr	a
+   0104 C0 E0               295 	push	acc
+   0106 12s00r00            296 	lcall	__modsint
+   0109 AE 82               297 	mov	r6,dpl
+   010B 15 81               298 	dec	sp
+   010D 15 81               299 	dec	sp
+   010F 8E 82               300 	mov	dpl,r6
+   0111 22                  301 	ret
+                            302 ;------------------------------------------------------------
+                            303 ;Allocation info for local variables in function 'pushElement'
+                            304 ;------------------------------------------------------------
+                            305 ;element                   Allocated to stack - _bp -3
+                            306 ;pFifo                     Allocated to registers r5 r6 r7 
+                            307 ;tail                      Allocated to stack - _bp +1
+                            308 ;------------------------------------------------------------
+                            309 ;	SRC/fifo.c:22: void pushElement( fifo_t* pFifo, unsigned char element ) {
+                            310 ;	-----------------------------------------
+                            311 ;	 function pushElement
+                            312 ;	-----------------------------------------
+   0112                     313 _pushElement:
+   0112 C0*00               314 	push	_bp
+   0114 85 81*00            315 	mov	_bp,sp
+   0117 05 81               316 	inc	sp
+                            317 ;	SRC/fifo.c:23: unsigned char tail = getTail(pFifo);
+   0119 AD 82               318 	mov	r5,dpl
+   011B AE 83               319 	mov	r6,dph
+   011D AF F0               320 	mov	r7,b
+   011F C0 07               321 	push	ar7
+   0121 C0 06               322 	push	ar6
+   0123 C0 05               323 	push	ar5
+   0125 12s00rD2            324 	lcall	_getTail
+   0128 A8*00               325 	mov	r0,_bp
+   012A 08                  326 	inc	r0
+   012B A6 82               327 	mov	@r0,dpl
+   012D D0 05               328 	pop	ar5
+   012F D0 06               329 	pop	ar6
+   0131 D0 07               330 	pop	ar7
+                            331 ;	SRC/fifo.c:24: pFifo->elems[tail] = element;
+   0133 74 02               332 	mov	a,#0x02
+   0135 2D                  333 	add	a,r5
+   0136 FA                  334 	mov	r2,a
+   0137 E4                  335 	clr	a
+   0138 3E                  336 	addc	a,r6
+   0139 FB                  337 	mov	r3,a
+   013A 8F 04               338 	mov	ar4,r7
+   013C A8*00               339 	mov	r0,_bp
+   013E 08                  340 	inc	r0
+   013F E6                  341 	mov	a,@r0
+   0140 2A                  342 	add	a,r2
+   0141 FA                  343 	mov	r2,a
+   0142 E4                  344 	clr	a
+   0143 3B                  345 	addc	a,r3
+   0144 FB                  346 	mov	r3,a
+   0145 8A 82               347 	mov	dpl,r2
+   0147 8B 83               348 	mov	dph,r3
+   0149 8C F0               349 	mov	b,r4
+   014B E5*00               350 	mov	a,_bp
+   014D 24 FD               351 	add	a,#0xfd
+   014F F8                  352 	mov	r0,a
+   0150 E6                  353 	mov	a,@r0
+   0151 12s00r00            354 	lcall	__gptrput
+                            355 ;	SRC/fifo.c:25: pFifo->size++;
+   0154 8D 82               356 	mov	dpl,r5
+   0156 8E 83               357 	mov	dph,r6
+   0158 8F F0               358 	mov	b,r7
+   015A 12s00r00            359 	lcall	__gptrget
+   015D FC                  360 	mov	r4,a
+   015E 0C                  361 	inc	r4
+   015F 8D 82               362 	mov	dpl,r5
+   0161 8E 83               363 	mov	dph,r6
+   0163 8F F0               364 	mov	b,r7
+   0165 EC                  365 	mov	a,r4
+   0166 12s00r00            366 	lcall	__gptrput
+   0169 15 81               367 	dec	sp
+   016B D0*00               368 	pop	_bp
+   016D 22                  369 	ret
+                            370 ;------------------------------------------------------------
+                            371 ;Allocation info for local variables in function 'isEmpty'
+                            372 ;------------------------------------------------------------
+                            373 ;pFifo                     Allocated to registers r5 r6 r7 
+                            374 ;------------------------------------------------------------
+                            375 ;	SRC/fifo.c:28: int isEmpty( fifo_t* pFifo ) {
+                            376 ;	-----------------------------------------
+                            377 ;	 function isEmpty
+                            378 ;	-----------------------------------------
+   016E                     379 _isEmpty:
+                            380 ;	SRC/fifo.c:29: return pFifo->size == 0;
+   016E AE 83               381 	mov	r6,dph
+   0170 AF F0               382 	mov	r7,b
+   0172 12s00r00            383 	lcall	__gptrget
+   0175 FD                  384 	mov	r5,a
+   0176 E4                  385 	clr	a
+   0177 BD 00 01            386 	cjne	r5,#0x00,00103$
+   017A 04                  387 	inc	a
+   017B                     388 00103$:
+   017B FD                  389 	mov	r5,a
+   017C 33                  390 	rlc	a
+   017D 95 E0               391 	subb	a,acc
+   017F 8D 82               392 	mov	dpl,r5
+   0181 F5 83               393 	mov	dph,a
+   0183 22                  394 	ret
+                            395 	.area CSEG    (CODE)
+                            396 	.area CONST   (CODE)
+                            397 	.area XINIT   (CODE)
+                            398 	.area CABS    (ABS,CODE)
