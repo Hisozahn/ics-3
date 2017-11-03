@@ -31,6 +31,8 @@ e-mail: kluchev@d1.ifmo.ru
 #include "dip.h"
 #include "led.h"
 #include "mode.h"
+#include <stdio.h>
+#include <ctype.h>
 
 static void clear_error() {
 	leds(0);
@@ -68,6 +70,32 @@ static void process_char() {
 		}			
 	}
 }
+static unsigned char parse_hex(char* str) {
+	unsigned char result = 0;
+	while (*str) {		
+		char c = tolower(*str);
+		result *=16;
+		
+		if (c >= '0' && c <= '9') {
+			result += c - '0';			
+		}
+		else if (c >= 'a' && c <= 'f') {
+			result += c - 'a' + 10;
+		}
+		else {
+			error();
+		}
+		str++;
+	}
+	return result;
+}
+
+static void convert_number() {
+	char input[] = "7F";
+	unsigned char c = parse_hex(input);
+	
+	leds(c);
+}
 
 void main( void )
 {
@@ -82,11 +110,11 @@ unsigned char c;
 
     while( 1 )
     {
-		if (g_mode == MODE_CHAR) {
+		if (g_mode != MODE_CHAR) {
 			process_char();
 		}
 		else {
-			
+			convert_number();
 		}        
     }
 }    
