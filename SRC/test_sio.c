@@ -30,6 +30,44 @@ e-mail: kluchev@d1.ifmo.ru
 #include "sio.h"
 #include "dip.h"
 #include "led.h"
+#include "mode.h"
+
+static void clear_error() {
+	leds(0);
+}
+
+static void error() {
+	leds(0x77);
+}
+
+static void process_char() {
+	if( rsiostat() )
+	{		
+		char char_buf[29];
+		unsigned char c;
+		clear_error();
+		c = rsio();
+		
+		if (c >= 'a' && c <= 'z') {
+			unsigned char ptr = 0;
+			unsigned char l = c - 0x20 - 1;
+			char_buf[ptr++] = c;
+			
+			for (; l != 'A' - 1; l--, ptr++) {
+				char_buf[ptr] = l;
+			}
+			char_buf[ptr++] = '\r';
+			char_buf[ptr++] = '\n';
+			char_buf[ptr++] = '\0';
+			
+			type(char_buf);
+		}
+		else {
+			//wsio(c);
+			error();
+		}			
+	}
+}
 
 void main( void )
 {
@@ -44,18 +82,11 @@ unsigned char c;
 
     while( 1 )
     {
-        if( rsiostat() )
-        {
-            c = rsio();
-
-            switch( c )
-            {
-            case '1': type("\r\ntest 1\r\n"); break;
-            case '2': type("\r\ntest 2\r\n"); break;
-            case '3': type("\r\ntest 3\r\n"); break;
-
-            default: wsio( c );          break;   
-            }
-        }
+		if (g_mode == MODE_CHAR) {
+			process_char();
+		}
+		else {
+			
+		}        
     }
 }    
