@@ -3,6 +3,6 @@
 
 typedef enum {MODE_CHAR, MODE_NUM} Mode;
 
-Mode g_mode = MODE_CHAR;
+extern Mode g_mode;
 
 #endif

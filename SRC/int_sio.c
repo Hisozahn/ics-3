@@ -30,28 +30,28 @@ e-mail: kluchev@d1.ifmo.ru
 #include "int_sio.h"
 #include "fifo.h"
 #include "led.h"
+#include "mode.h"
 
 static fifo_t rFifo;
 static fifo_t wFifo;
 
 void SIO_ISR( void ) __interrupt ( 4 ) {
-    if(TI) {
-        // Передача байта
-        // Читаем WFIFO (буфер передачи) и записываем его в SBUF
-        SBUF = pullElement(&wFifo);
-        TI = 0;
+	if(TI) {
+		TI = 0;
+		if (!isEmpty(&wFifo)) {
+			SBUF = pullElement(&wFifo);
+		}
     }
     if(RI) {
-        // Прием байта
-        // Читаем SBUF и записываем его в RFIFO (буфер приема)
-        pushElement(&rFifo, SBUF);
-        RI = 0;
+		unsigned char t = SBUF;
+        pushElement(&rFifo, t);
+		RI = 0;
     }
 }
 
 void SetVector(unsigned char __xdata * Address, void * Vector)
 {
-	unsigned char __xdata * TmpVector; // Временная переменная
+	unsigned char __xdata * TmpVector; // Временная переменная//
 
 	// Первым байтом по указанному адресу записывается 
 	// код команды передачи управления ljmp, равный 02h
@@ -83,14 +83,14 @@ void init_sio( unsigned char speed )
     initFifo(&rFifo);
     initFifo(&wFifo);
     
-    SetVector( 0x23, (void *)SIO_ISR );
-    
-    TH1       =  speed; 
+    SetVector( 0x2023, (void *)SIO_ISR );
+	
+    TH1       =  speed;
     TMOD     |=  0x20; //Таймер 1 будет работать в режиме autoreload
     TCON     |=  0x40; //Запуск таймера 1
     SCON      =  0x50; //Настройки последовательного канала
     ES        =  1;    // Enable serial interrupt
-    EA        =  1;     // Enable any interrupt
+    EA        =  0;     // Disable any interrupt	
 }
 
 /**----------------------------------------------------------------------------
@@ -105,7 +105,13 @@ void init_sio( unsigned char speed )
 ----------------------------------------------------------------------------- */
 unsigned char rsiostat(void)  
 {
-    return RI;
+	if (g_mode == MODE_CHAR) {
+		return RI;
+	}
+	else {
+		return !isEmpty(&rFifo);
+	}
+	
 }
 
 
@@ -119,19 +125,26 @@ unsigned char rsiostat(void)
 Результат:  нет
 ----------------------------------------------------------------------------- */
 void wsio( unsigned char c )
-{
-    char oldES = ES;
-    int fifoWasEmpty;
-    ES = 0;
-    
-    fifoWasEmpty = isEmpty(&wFifo);
-    pushElement(&wFifo, c);
-    
-    if (fifoWasEmpty) {
-        TI = 1;
-    }
-    
-    ES = oldES;
+{	
+	if (g_mode == MODE_CHAR) {
+		SBUF = c;
+		TI   = 0;
+		while( !TI );
+	}
+	else {
+		char oldES = ES;
+		int fifoWasEmpty;
+		ES = 0;
+		
+		fifoWasEmpty = isEmpty(&wFifo);
+
+		pushElement(&wFifo, c);    
+		if (fifoWasEmpty) {
+			TI = 1;		
+		}    
+		ES = oldES;
+	}
+    		
 }
 
 /**----------------------------------------------------------------------------
@@ -144,21 +157,29 @@ void wsio( unsigned char c )
 Результат:  принятый символ
 ----------------------------------------------------------------------------- */
 unsigned char rsio(void)
-{
-    unsigned char c;
-    char oldES = ES;
+{	
+	if (g_mode == MODE_CHAR) {
+		while( !RI );
+		RI = 0;
+		return SBUF;
+	}
+	else {
+		unsigned char c;
+		char oldES = ES;
+		
+		ES = 0;
+		
+		if (isEmpty(&rFifo)) {
+			c = 0;
+		}
+		else {
+			c = pullElement(&rFifo);
+		}
+		
+		ES = oldES;
+		return c;
+	}
     
-    ES = 0;
-    
-    if (isEmpty(&rFifo)) {
-        c = 0;
-    }
-    else {
-        c = pullElement(&rFifo);
-    }
-    
-    ES = oldES;
-    return c;
 }
 
 
@@ -173,6 +194,24 @@ unsigned char rsio(void)
 ----------------------------------------------------------------------------- */
 void type(char * str)
 {
-    while( *str ) wsio( *str++ );
+	if (g_mode == MODE_CHAR) {	
+		while( *str ) wsio( *str++ );
+	}
+	else {
+		char oldES = ES;
+		int fifoWasEmpty;
+		static int max_size = 0;
+		ES = 0;
+		
+		fifoWasEmpty = isEmpty(&wFifo);
+
+		while( *str ) {
+			pushElement(&wFifo,*str++);
+		}
+		if (fifoWasEmpty) {
+			TI = 1;		
+		}    
+		ES = oldES;	
+	}
 }
 

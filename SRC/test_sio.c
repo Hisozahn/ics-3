@@ -35,6 +35,9 @@ e-mail: kluchev@d1.ifmo.ru
 #include "mode.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
+
+Mode g_mode;
 
 static void clear_error() {
 	leds(0);
@@ -67,7 +70,6 @@ static void process_char() {
 			type(char_buf);
 		}
 		else {
-			//wsio(c);
 			error();
 		}			
 	}
@@ -86,40 +88,83 @@ static unsigned char parse_hex(char* str) {
 		}
 		else {
 			error();
+			return result / 16;
 		}
 		str++;
 	}
 	return result;
 }
 
-static void convert_number() {
-	char input[] = "7F";
-	unsigned char c = parse_hex(input);
-	
-	leds(c);
+
+static void type_converted(char* str) {
+	char buffer[4];
+	unsigned char i;
+	unsigned char index = 0;
+	unsigned char number = parse_hex(str);
+
+	buffer[3] = 0;
+	buffer[2] = '0';
+	buffer[1] = '0';
+	buffer[0] = '0';
+	while (number != 0) {
+		i = number % 10;
+		number /= 10;
+		buffer[2 - index] = '0' + i;
+		++index;
+	}
+	type(buffer);
+}
+
+
+void convert_number() {
+	int i = 0;
+    char buffer[30];
+	unsigned char c;
+	memset(buffer, 0, sizeof(buffer) * sizeof(buffer[0]));
+
+	i = 0;
+	while(1) {
+		if (rsiostat()) {
+			if ((c = rsio()) != '\r') {
+				if (c == '\n') {
+					continue;
+				}
+				buffer[i] = c;
+				++i;
+				wsio(c);
+			}
+			else {
+				break;
+			}
+		}			
+	}
+	clear_error();
+	type("\r\n");
+	type_converted(buffer);
+	type("\r\n");
 }
 
 void main( void )
 {
     
-unsigned char c;
-    /*while (1) {
-        leds(c);
-    }*/
-    init_sio( S9600 );
+	init_sio( S2400 );
 
-    //type("Тест драйвера SIO для стенда SDK-1.1\r\n");
-    //type("Нажимайте кноки для тестирования... \r\n");
-    //type("ABCDEF\r\n");
-    
     while( 1 )
     {
-
-		if (g_mode != MODE_CHAR) {
+		if (getDips() != 0) {
+			EA = 0;
+			g_mode = MODE_CHAR;
+		}
+		else {
+			g_mode = MODE_NUM;
+			EA = 1;
+		}
+		
+		if (g_mode == MODE_CHAR) {
 			process_char();
 		}
 		else {
 			convert_number();
-		}        
+		} 
     }
 }    

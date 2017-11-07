@@ -22,9 +22,9 @@ TARBALL  = ${PROJNAME}.tar
 # Настройки M3P
 
 M3P		 = m3p
-COMPORT	 = com1
+COMPORT	 = com5
 COMLOG	 = $(COMPORT)_log.txt
-BAUD	 = 9600	
+BAUD	 = 2400
 
 # Каталоги с исходными текстами
 
@@ -66,7 +66,7 @@ $(SRC_DIR)/max.c \
 $(SRC_DIR)/int_sio.c \
 $(SRC_DIR)/test_sio.c \
 $(SRC_DIR)/dip.c \
-$(SRC_DIR)/fifo.c 
+$(SRC_DIR)/fifo.c
 
 
 LAB_OBJ = $(LAB_SRC:.c=.rel)
